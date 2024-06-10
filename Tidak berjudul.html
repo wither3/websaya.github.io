@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengunduh TikTok</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, margin-top 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        button.disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            margin-top: 3px;
+        }
+        button.orange {
+            background-color: orange;
+        }
+        button.orange:hover {
+            background-color: #ffa500;
+        }
+        button.black {
+            background-color: black;
+        }
+        button.black:hover {
+            background-color: #333;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Pengunduh TikTok</h1>
+        <input type="text" id="tiktokUrl" placeholder="Masukkan URL TikTok">
+        <button id="fetchButton">Ambil Data TikTok</button>
+        <div id="result"></div>
+        <div class="error" id="error"></div>
+    </div>
+
+    <script>
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            const urlInput = document.getElementById('tiktokUrl').value;
+            const errorDiv = document.getElementById('error');
+            const fetchButton = document.getElementById('fetchButton');
+            errorDiv.textContent = '';
+
+            const tiktokUrlPattern = /^https:\/\/www\.tiktok\.com\/@.+\/video\/\d+/;
+            if (!tiktokUrlPattern.test(urlInput)) {
+                errorDiv.textContent = 'Link salah';
+                return;
+            }
+
+            const encodedUrl = encodeURIComponent(urlInput);
+            const apiUrl = `https://apiruulzz.my.id/api/downloader/tiktok?url=${encodedUrl}`;
+
+            // Disable button, change color, add margin and start countdown
+            fetchButton.disabled = true;
+            fetchButton.classList.add('disabled');
+            let countdown = 10;
+
+            const countdownInterval = setInterval(() => {
+                fetchButton.textContent = `Tunggu ${countdown} detik`;
+                countdown--;
+                if (countdown < 0) {
+                    clearInterval(countdownInterval);
+                    fetchButton.disabled = false;
+                    fetchButton.classList.remove('disabled');
+                    fetchButton.textContent = 'Ambil Data TikTok';
+                }
+            }, 1000);
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        // Menampilkan data yang diambil
+                        const resultDiv = document.getElementById('result');
+                        resultDiv.innerHTML = `
+                            <h2>Data yang Diambil:</h2>
+                            <p><strong>Penulis:</strong> ${data.result.author}</p>
+                            <p><strong>Judul:</strong> ${data.result.title}</p>
+                            <video controls>
+                                <source src="${data.result.nowm}" type="video/mp4">
+                                Browser Anda tidak mendukung tag video.
+                            </video>
+                            <p><a href="${data.result.nowm}" download><button class="orange">Unduh Video Tanpa Watermark</button></a></p>
+                            <p><a href="${data.result.watermark}" download><button class="orange">Unduh Video Dengan Watermark</button></a></p>
+                            <p><a href="${data.result.audio}" download><button class="orange">Unduh Audio</button></a></p>
+                        `;
+                    } else {
+                        errorDiv.textContent = 'Gagal mengambil data dari API';
+                        console.error('Gagal mengambil data:', data);
+                    }
+                })
+                .catch(error => {
+                    errorDiv.textContent = 'Terjadi kesalahan saat mengambil data dari API';
+                    console.error('Terjadi kesalahan saat mengambil data:', error);
+                });
+        });
+    </script>
+</body>
+</html>
