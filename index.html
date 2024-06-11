@@ -7,16 +7,81 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
             background-color: #f0f0f0;
         }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #navContent {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
         h1 {
+            margin: 0;
+            font-size: 24px;
             text-align: center;
-            color: #333;
+            flex-grow: 1;
+        }
+        #menuToggle {
+            display: inline-block;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+        #menuToggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            background-color: white;
+        }
+        #sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+        #sidebar a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+        #sidebar a:hover {
+            background-color: #575757;
+        }
+        #sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
         }
         #container {
             max-width: 600px;
-            margin: auto;
+            margin: 80px auto 20px auto;
             background: white;
             padding: 20px;
             border-radius: 10px;
@@ -74,18 +139,74 @@
             color: red;
             margin-top: 10px;
         }
+        .download-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: orange;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .download-button:hover {
+            background-color: #ffa500;
+        }
+        .download-button.clicked {
+            background-color: black;
+        }
+        #instructions {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
+    <nav>
+        <div id="navContent">
+            <div id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <h1>Pengunduh TikTok</h1>
+        </div>
+    </nav>
+    <div id="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#">Beranda</a>
+        <a href="#">Unduh Video</a>
+        <a href="#">Petunjuk</a>
+    </div>
     <div id="container">
-        <h1>Pengunduh TikTok</h1>
         <input type="text" id="tiktokUrl" placeholder="Masukkan URL TikTok">
         <button id="fetchButton">Ambil Data TikTok</button>
         <div id="result"></div>
         <div class="error" id="error"></div>
     </div>
+    <div id="instructions">
+        <h2>Petunjuk Penggunaan:</h2>
+        <p>1. Salin tautan video TikTok yang ingin Anda unduh.</p>
+        <p>2. Tempel tautan ke dalam kotak teks di atas.</p>
+        <p>3. Klik tombol "Ambil Data TikTok". Tunggu beberapa detik hingga data diambil.</p>
+        <p>4. Klik tombol unduh untuk mengunduh video atau audio yang diinginkan.</p>
+    </div>
 
     <script>
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').style.width = '250px';
+        });
+
+        function closeNav() {
+            document.getElementById('sidebar').style.width = '0';
+        }
+
         document.getElementById('fetchButton').addEventListener('click', function() {
             const urlInput = document.getElementById('tiktokUrl').value;
             const errorDiv = document.getElementById('error');
@@ -99,7 +220,7 @@
             }
 
             const encodedUrl = encodeURIComponent(urlInput);
-            const apiUrl = `https://apiruulzz.my.id/api/downloader/tiktok?url=${encodedUrl}`;
+            const apiUrl = `https://api.onesytex.my.id/api/tiktok-dl?url=${encodedUrl}`;
 
             // Disable button, change color, add margin and start countdown
             fetchButton.disabled = true;
@@ -120,21 +241,34 @@
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status) {
+                    if (data.status === 200) {
                         // Menampilkan data yang diambil
                         const resultDiv = document.getElementById('result');
+                        const mediaLinks = data.result.medias.map(media => {
+                            const mediaLabel = media.quality === "watermark" ? "Video Dengan Watermark" : 
+                                                (media.quality === "sd" ? "Video Kualitas Rendah" : 
+                                                (media.quality === "hd" ? "Video Kualitas Tinggi" : "Audio"));
+                            return `<p><a href="${media.url}" download><button class="download-button">${mediaLabel}</button></a></p>`;
+                        }).join('');
+
+                        const videoSD = data.result.medias.find(media => media.quality === "sd");
+
                         resultDiv.innerHTML = `
                             <h2>Data yang Diambil:</h2>
-                            <p><strong>Penulis:</strong> ${data.result.author}</p>
                             <p><strong>Judul:</strong> ${data.result.title}</p>
                             <video controls>
-                                <source src="${data.result.nowm}" type="video/mp4">
-                                Browser Anda tidak mendukung tag video.
+                                <source src="${videoSD.url}" type="video/mp4">
+                                Video tidak didukung oleh browser Anda.
                             </video>
-                            <p><a href="${data.result.nowm}" download><button class="orange">Unduh Video Tanpa Watermark</button></a></p>
-                            <p><a href="${data.result.watermark}" download><button class="orange">Unduh Video Dengan Watermark</button></a></p>
-                            <p><a href="${data.result.audio}" download><button class="orange">Unduh Audio</button></a></p>
+                            ${mediaLinks}
                         `;
+
+                        // Menambahkan event listener untuk tombol unduh
+                        document.querySelectorAll('.download-button').forEach(button => {
+                            button.addEventListener('click', function(event) {
+                                button.classList.add('clicked');
+                            });
+                        });
                     } else {
                         errorDiv.textContent = 'Gagal mengambil data dari API';
                         console.error('Gagal mengambil data:', data);
