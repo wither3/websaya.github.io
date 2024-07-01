@@ -165,6 +165,32 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        
+        
+   #batteryInfo {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+#batteryLevel {
+    margin-right: 8px;
+}
+
+#chargingStatus {
+    font-size: 10px;
+    margin-left: 4px;
+    text-transform: uppercase;
+}
+     
+        
     </style>
 </head>
 <body>
@@ -175,13 +201,13 @@
                 <span></span>
                 <span></span>
             </div>
-            <h1>Pengunduh TikTok</h1>
+            <h1>MeledakTik</h1>
         </div>
     </nav>
     <div id="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <a href="#">Beranda</a>
-        <a href="#">Unduh Video</a>
+        <a href="https://chat.whatsapp.com/FZtfxpSyYCN9FyCjWekyZN">Grup WA</a>
         <a href="#">Petunjuk</a>
     </div>
     <div id="container">
@@ -190,6 +216,11 @@
         <div id="result"></div>
         <div class="error" id="error"></div>
     </div>
+   <div id="batteryInfo">
+    <span id="batteryLevel">--%</span>
+    <span id="chargingStatus">-</span>
+</div>
+ 
     <div id="instructions">
         <h2>Petunjuk Penggunaan:</h2>
         <p>1. Salin tautan video TikTok yang ingin Anda unduh.</p>
@@ -199,86 +230,109 @@
     </div>
 
     <script>
-        document.getElementById('menuToggle').addEventListener('click', function() {
-            document.getElementById('sidebar').style.width = '250px';
-        });
+       document.getElementById('fetchButton').addEventListener('click', function() {
+    const urlInput = document.getElementById('tiktokUrl').value;
+    const errorDiv = document.getElementById('error');
+    const fetchButton = document.getElementById('fetchButton');
+    const resultDiv = document.getElementById('result');
+    errorDiv.textContent = '';
 
-        function closeNav() {
-            document.getElementById('sidebar').style.width = '0';
+    const tiktokUrlPattern = /^(?:https:\/\/(?:www\.)?tiktok\.com\/(@[\w.-]+\/video\/\d+)|(https:\/\/vt\.tiktok\.com\/[\w.-]+\/))$/i;
+
+    if (!tiktokUrlPattern.test(urlInput)) {
+        errorDiv.textContent = 'Link salah';
+        return;
+    }
+
+    const encodedUrl = encodeURIComponent(urlInput);
+    const apiUrl = `https://api.tiklydown.eu.org/api/download/v2?url=${encodedUrl}`;
+
+    // Disable button, change color, add margin and start countdown
+    fetchButton.disabled = true;
+    fetchButton.classList.add('disabled');
+    let countdown = 10;
+
+    const countdownInterval = setInterval(() => {
+        fetchButton.textContent = `Tunggu ${countdown} detik`;
+        countdown--;
+        if (countdown < 0) {
+            clearInterval(countdownInterval);
+            fetchButton.disabled = false;
+            fetchButton.classList.remove('disabled');
+            fetchButton.textContent = 'Ambil Data TikTok';
         }
+    }, 1000);
 
-        document.getElementById('fetchButton').addEventListener('click', function() {
-            const urlInput = document.getElementById('tiktokUrl').value;
-            const errorDiv = document.getElementById('error');
-            const fetchButton = document.getElementById('fetchButton');
-            errorDiv.textContent = '';
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 200) {
+                // Menampilkan data yang diambil
+                const mediaLinks = `
+                    <p><a href="${data.result.video1}" download><button class="download-button">Video Kualitas Rendah</button></a></p>
+                    <p><a href="${data.result.video_hd}" download><button class="download-button">Video Kualitas Tinggi</button></a></p>
+                    <p><a href="${data.result.video_watermark}" download><button class="download-button">Video dengan Watermark</button></a></p>
+                    <p><a href="${data.result.music}" download><button class="download-button">Audio</button></a></p>
+                `;
 
-            const tiktokUrlPattern = /^https:\/\/www\.tiktok\.com\/@.+\/video\/\d+/;
-            if (!tiktokUrlPattern.test(urlInput)) {
-                errorDiv.textContent = 'Link salah';
-                return;
-            }
+                resultDiv.innerHTML = `
+                    <h2>Data yang Diambil:</h2>
+                    <p><strong>Judul:</strong> ${data.result.desc}</p>
+                    <video controls>
+                        <source src="${data.result.video1}" type="video/mp4">
+                        Video tidak didukung oleh browser Anda.
+                    </video>
+                    ${mediaLinks}
+                `;
 
-            const encodedUrl = encodeURIComponent(urlInput);
-            const apiUrl = `https://api.onesytex.my.id/api/tiktok-dl?url=${encodedUrl}`;
-
-            // Disable button, change color, add margin and start countdown
-            fetchButton.disabled = true;
-            fetchButton.classList.add('disabled');
-            let countdown = 10;
-
-            const countdownInterval = setInterval(() => {
-                fetchButton.textContent = `Tunggu ${countdown} detik`;
-                countdown--;
-                if (countdown < 0) {
-                    clearInterval(countdownInterval);
-                    fetchButton.disabled = false;
-                    fetchButton.classList.remove('disabled');
-                    fetchButton.textContent = 'Ambil Data TikTok';
-                }
-            }, 1000);
-
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 200) {
-                        // Menampilkan data yang diambil
-                        const resultDiv = document.getElementById('result');
-                        const mediaLinks = data.result.medias.map(media => {
-                            const mediaLabel = media.quality === "watermark" ? "Video Dengan Watermark" : 
-                                                (media.quality === "sd" ? "Video Kualitas Rendah" : 
-                                                (media.quality === "hd" ? "Video Kualitas Tinggi" : "Audio"));
-                            return `<p><a href="${media.url}" download><button class="download-button">${mediaLabel}</button></a></p>`;
-                        }).join('');
-
-                        const videoSD = data.result.medias.find(media => media.quality === "sd");
-
-                        resultDiv.innerHTML = `
-                            <h2>Data yang Diambil:</h2>
-                            <p><strong>Judul:</strong> ${data.result.title}</p>
-                            <video controls>
-                                <source src="${videoSD.url}" type="video/mp4">
-                                Video tidak didukung oleh browser Anda.
-                            </video>
-                            ${mediaLinks}
-                        `;
-
-                        // Menambahkan event listener untuk tombol unduh
-                        document.querySelectorAll('.download-button').forEach(button => {
-                            button.addEventListener('click', function(event) {
-                                button.classList.add('clicked');
-                            });
-                        });
-                    } else {
-                        errorDiv.textContent = 'Gagal mengambil data dari API';
-                        console.error('Gagal mengambil data:', data);
-                    }
-                })
-                .catch(error => {
-                    errorDiv.textContent = 'Terjadi kesalahan saat mengambil data dari API';
-                    console.error('Terjadi kesalahan saat mengambil data:', error);
+                // Menambahkan event listener untuk tombol unduh
+                document.querySelectorAll('.download-button').forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        button.classList.add('clicked');
+                    });
                 });
+            } else {
+                errorDiv.textContent = 'Gagal mengambil data dari API';
+                console.error('Gagal mengambil data:', data);
+            }
+        })
+        .catch(error => {
+            errorDiv.textContent = 'Terjadi kesalahan saat mengambil data dari API';
+            console.error('Terjadi kesalahan saat mengambil data:', error);
         });
+});
+document.getElementById('menuToggle').addEventListener('click', function() {
+    document.getElementById('sidebar').style.width = '250px';
+});
+
+function closeNav() {
+    document.getElementById('sidebar').style.width = '0';
+}
+// Fungsi untuk mengupdate informasi baterai
+function updateBatteryStatus() {
+    navigator.getBattery().then(function(battery) {
+        // Mengambil level baterai dalam persen
+        let batteryLevel = Math.floor(battery.level * 100);
+
+        // Menampilkan level baterai
+        document.getElementById('batteryLevel').textContent = batteryLevel + '%';
+
+        // Menampilkan status charging/not charging
+        let chargingStatus = battery.charging ? 'Charging' : 'Not Charging';
+        document.getElementById('chargingStatus').textContent = chargingStatus;
+    });
+}
+
+// Memanggil fungsi update saat halaman dimuat dan setiap kali ada perubahan baterai
+window.addEventListener('DOMContentLoaded', function() {
+    updateBatteryStatus();
+
+    navigator.getBattery().then(function(battery) {
+        battery.addEventListener('levelchange', updateBatteryStatus);
+        battery.addEventListener('chargingchange', updateBatteryStatus);
+    });
+});
+
     </script>
 </body>
 </html>
