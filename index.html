@@ -79,21 +79,28 @@
             font-size: 36px;
             margin-left: 50px;
         }
-        #container {
-            max-width: 600px;
-            margin: 80px auto 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+#container {
+  max-width: 1000px;
+  margin: 80px auto 20px auto;
+  padding: 20px;
+  border-radius: 1px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  /* Gradasi warna pinggir */
+  border: 2px solid transparent; /* Pinggiran transparan untuk memungkinkan gradasi */
+  border-image: linear-gradient(to right, #ff4e50, #ff9e2c) 1;
+  /* Gradient untuk warna tengah transparan */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), white;
+}
+
+
+
         input[type="text"] {
             width: 100%;
             padding: 15px;
             margin: 10px 0;
-            border: 1px solid #ccc;
+            border: 1px solid red;
             border-radius: 5px;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+            box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.1); /* Warna merah: rgba(255, 0, 0, 0.1) */
             font-size: 16px;
         }
         button {
@@ -210,17 +217,41 @@
         <a href="https://chat.whatsapp.com/FZtfxpSyYCN9FyCjWekyZN">Grup WA</a>
         <a href="#">Petunjuk</a>
     </div>
+    
+    
+    
+    
     <div id="container">
         <input type="text" id="tiktokUrl" placeholder="Masukkan URL TikTok">
         <button id="fetchButton">Ambil Data TikTok</button>
         <div id="result"></div>
         <div class="error" id="error"></div>
     </div>
+    
+    
+    
    <div id="batteryInfo">
     <span id="batteryLevel">--%</span>
     <span id="chargingStatus">-</span>
 </div>
- 
+ <div id="instructions">
+ 	<center>
+ <img src="https://telegra.ph/file/278498e200f377151765d.png" height="200px">	
+ </center>
+ <h1>Unlimited download</h1>
+ <text color="black">Nikmati kebebasan tanpa batas dengan fitur unduhan tak terbatas kami. Unduh sebanyak mungkin video TikTok yang Anda inginkan, tanpa batasan jumlah atau ukuran file. Dengan kecepatan unduhan yang cepat dan kualitas video yang tinggi, Anda dapat menyimpan konten favorit Anda untuk ditonton kapan saja, di mana saja. Tidak perlu lagi khawatir tentang batasan unduhan - kami menawarkan pengalaman unduhan yang benar-benar tak terbatas untuk memenuhi semua kebutuhan Anda.
+</text>
+ </div>
+ <br>
+ 	<br>
+ <div id="instructions">
+ 	<center>
+ 	<img src="https://telegra.ph/file/3ba91119ac98fc8fa9738.png" height="200px">
+ </center>
+ <h1>DOWNLOAD MP3</h1>
+ <text color="black">Transformasikan video TikTok favorit Anda menjadi file audio MP3 dengan mudah dan cepat. Fitur Download MP3 kami memungkinkan Anda untuk mengunduh lagu, sound, atau klip audio dari video TikTok dalam format MP3 berkualitas tinggi. Nikmati musik dan audio favorit Anda di mana saja, kapan saja, tanpa harus terhubung ke internet. Cukup tempelkan tautan video TikTok dan konversi ke MP3 dalam hitungan detik!
+ </text>
+ </div>
     <div id="instructions">
         <h2>Petunjuk Penggunaan:</h2>
         <p>1. Salin tautan video TikTok yang ingin Anda unduh.</p>
