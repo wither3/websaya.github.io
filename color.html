@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker & Gradient Maker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+        .color-picker {
+            margin: 10px 0;
+        }
+        .color-code {
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .gradient-display {
+            margin: 20px 0;
+            height: 100px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .btn-copy {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-copy:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Color Picker & Gradient Maker</h1>
+    
+    <!-- Color Picker Section -->
+    <h2>Pick a Color</h2>
+    <input type="color" id="colorPicker" class="color-picker">
+    <div id="colorCode" class="color-code">#ffffff</div>
+    <button class="btn-copy" onclick="copyColorCode()">Copy Color Code</button>
+
+    <!-- Gradient Maker Section -->
+    <h2>Create a Gradient</h2>
+    <input type="color" id="startColor" class="color-picker">
+    <input type="color" id="midColor1" class="color-picker">
+    <input type="color" id="midColor2" class="color-picker">
+    <input type="color" id="endColor" class="color-picker">
+    <div id="gradientCode" class="color-code">linear-gradient(to right, #ffffff, #ff0000, #00ff00, #0000ff)</div>
+    <div id="gradientDisplay" class="gradient-display"></div>
+    <button class="btn-copy" onclick="copyGradientCode()">Copy Gradient Code</button>
+</div>
+
+<script>
+    const colorPicker = document.getElementById('colorPicker');
+    const colorCode = document.getElementById('colorCode');
+
+    const startColorPicker = document.getElementById('startColor');
+    const midColor1Picker = document.getElementById('midColor1');
+    const midColor2Picker = document.getElementById('midColor2');
+    const endColorPicker = document.getElementById('endColor');
+    const gradientCode = document.getElementById('gradientCode');
+    const gradientDisplay = document.getElementById('gradientDisplay');
+
+    colorPicker.addEventListener('input', function() {
+        colorCode.textContent = colorPicker.value;
+        colorCode.style.backgroundColor = colorPicker.value;
+    });
+
+    startColorPicker.addEventListener('input', updateGradient);
+    midColor1Picker.addEventListener('input', updateGradient);
+    midColor2Picker.addEventListener('input', updateGradient);
+    endColorPicker.addEventListener('input', updateGradient);
+
+    function updateGradient() {
+        const startColor = startColorPicker.value;
+        const midColor1 = midColor1Picker.value;
+        const midColor2 = midColor2Picker.value;
+        const endColor = endColorPicker.value;
+        const gradient = `linear-gradient(to right, ${startColor}, ${midColor1}, ${midColor2}, ${endColor})`;
+        gradientCode.textContent = gradient;
+        gradientDisplay.style.background = gradient;
+    }
+
+    function copyColorCode() {
+        copyToClipboard(colorCode.textContent);
+        alert('Color code copied: ' + colorCode.textContent);
+    }
+
+    function copyGradientCode() {
+        copyToClipboard(gradientCode.textContent);
+        alert('Gradient code copied: ' + gradientCode.textContent);
+    }
+
+    function copyToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
+</script>
+
+</body>
+</html>
