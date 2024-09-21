@@ -100,7 +100,7 @@
                     const response = await fetch(`https://api.tiklydown.eu.org/api/download/v2?url=${encodeURIComponent(link)}`);
                     const data = await response.json();
                     if (data.status === 200) {
-                        const videoUrl = data.result.video_hd || data.result.video1;
+                        const videoUrl = data.result.video1;
                         const videoHdUrl = data.result.video_hd;
                         const videoWatermarkUrl = data.result.video_watermark;
                         const musicUrl = data.result.music;
