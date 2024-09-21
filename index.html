@@ -1,440 +1,156 @@
-<!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengunduh TikTok</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
+        .menu-hidden {
+            transform: translateX(-100%);
         }
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ff3d3d;
-            color: white;
-            padding: 10px 20px;
-            box-shadow: 0 2px 1px rgba(0,0,0,0.1);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        #navContent {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            
-        }
-        h1 {
-            margin: 0;
-            font-size: 24px;
-            text-align: center;
-            flex-grow: 1;
-        }
-        #menuToggle {
-            display: inline-block;
-            cursor: pointer;
-            padding: 0 10px;
-        }
-        #menuToggle span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            margin: 5px auto;
-            background-color: white;
-        }
-        #sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1001;
-            top: 0;
-            left: 0;
-            background-color: #ff3d3d;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-        #sidebar a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 25px;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
-        #sidebar a:hover {
-            background-color: #575757;
-        }
-        #sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-#container {
-  max-width: 1000px;
-  margin: 80px auto 20px auto;
-  padding: 20px;
-  border-radius: 1px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  /* Gradasi warna pinggir */
-  border: 2px solid transparent; /* Pinggiran transparan untuk memungkinkan gradasi */
-  border-image: linear-gradient(to right, #ff4e50, #ff9e2c) 1;
-  /* Gradient untuk warna tengah transparan */
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), white;
-}
-
-
-
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 1px solid red;
-            border-radius: 5px;
-            box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.1); /* Warna merah: rgba(255, 0, 0, 0.1) */
-            font-size: 16px;
-        }
-        button {
-    width: 100%;
-    padding: 15px;
-    background: linear-gradient(to right, #ff0000, #ff8000, #ffd500, #ffff00);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s, margin-top 0.3s;
-}
-
-        button:hover {
-            background-color: #218838;
-        }
-        button.disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-            margin-top: 3px;
-        }
-        button.orange {
-            background-color: orange;
-        }
-        button.orange:hover {
-            background-color: #ffa500;
-        }
-        button.black {
-            background-color: black;
-        }
-        button.black:hover {
-            background-color: #333;
-        }
-        #result {
-            margin-top: 20px;
-        }
-        video {
-            width: 100%;
-            height: auto;
-            margin-top: 20px;
-        }
-        .error {
-            color: red;
-            margin-top: 10px;
+        .menu-visible {
+            transform: translateX(0);
         }
         .download-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: orange;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 16px;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
-        .download-button:hover {
-            background-color: #ffa500;
-        }
-        .download-button.clicked {
+        .download-button:active {
             background-color: black;
         }
-        #instructions {
-        
-            margin-top: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        .disabled-button {
+            background-color: gray;
+            cursor: not-allowed;
         }
-                #bawah {
-        
-            margin-top: 20px;
-            padding: 20px;
-            background: #ff3030;
-            border-radius: 0;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        
-        
-   #batteryInfo {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-}
-
-#batteryLevel {
-    margin-right: 8px;
-}
-
-#chargingStatus {
-    font-size: 10px;
-    margin-left: 4px;
-    text-transform: uppercase;
-}
-     
-        
     </style>
 </head>
-<body>
-    <nav>
-        <div id="navContent">
-            <div id="menuToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <h1>MeledakTik</h1>
+<body class="bg-gray-100">
+    <!-- Sidebar Menu -->
+    <div id="sidebarMenu" class="fixed top-0 left-0 w-64 h-full bg-blue-500 text-white p-4 transition-transform duration-300 menu-hidden z-20">
+        <ul>
+            <li class="py-2"><a href="#" class="text-white" onclick="navigateTo('index.html')">Home</a></li>
+            <li class="py-2"><a href="#" class="text-white" onclick="navigateTo('index2.html')">About</a></li>
+            <li class="py-2"><a href="#" class="text-white" onclick="navigateTo('index3.html')">Services</a></li>
+            <li class="py-2"><a href="#" class="text-white" onclick="navigateTo('index4.html')">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black opacity-50 hidden z-10" onclick="toggleMenu()"></div>
+
+    <!-- Header -->
+    <div class="bg-blue-500 p-2 flex items-center justify-between fixed top-0 left-0 w-full z-30">
+        <i class="fas fa-bars text-white text-xl cursor-pointer" onclick="toggleMenu()"></i>
+        <h1 class="text-white text-xl font-bold">MeledakTik</h1>
+        <div></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="p-4 mt-12">
+        <!-- Gradient Bar with Input -->
+        <div class="bg-gradient-to-r from-yellow-400 to-red-500 h-10 flex items-center justify-between p-2 rounded-md">
+            <input id="videoLink" type="text" placeholder="Paste TikTok video link here" class="bg-transparent text-white placeholder-white flex-grow outline-none px-2">
+            <i class="fas fa-copy text-white text-lg cursor-pointer" onclick="pasteLink()"></i>
         </div>
-    </nav>
-    <div id="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#">Beranda</a>
-        <a href="https://chat.whatsapp.com/FZtfxpSyYCN9FyCjWekyZN">Grup WA</a>
-        <a href="color.html">color code generator html</a>
-    </div>
-    
-    
-    
-    
-    <div id="container">
-        <input type="text" id="tiktokUrl" placeholder="Masukkan URL TikTok">
-        <button id="fetchButton">DOWNLOAD</button>
-        <div id="result"></div>
-        <div class="error" id="error"></div>
-    </div>
-    
-     
 
-    
-   <div id="batteryInfo">
-    <span id="batteryLevel">--%</span>
-    <span id="chargingStatus">-</span>
-</div>
- <div id="instructions">
- 	<center>
- <img src="https://telegra.ph/file/278498e200f377151765d.png" height="200px">	
- </center>
- <h1>Unlimited download</h1>
- <text color="black">Nikmati kebebasan tanpa batas dengan fitur unduhan tak terbatas kami. Unduh sebanyak mungkin video TikTok yang Anda inginkan, tanpa batasan jumlah atau ukuran file. Dengan kecepatan unduhan yang cepat dan kualitas video yang tinggi, Anda dapat menyimpan konten favorit Anda untuk ditonton kapan saja, di mana saja. Tidak perlu lagi khawatir tentang batasan unduhan - kami menawarkan pengalaman unduhan yang benar-benar tak terbatas untuk memenuhi semua kebutuhan Anda.
-</text>
- </div>
- <br>
- 	<br>
- <div id="instructions">
- 	<center>
- 	<img src="https://telegra.ph/file/3ba91119ac98fc8fa9738.png" height="200px">
- </center>
- <h1>DOWNLOAD MP3</h1>
- <text color="black">Transformasikan video TikTok favorit Anda menjadi file audio MP3 dengan mudah dan cepat. Fitur Download MP3 kami memungkinkan Anda untuk mengunduh lagu, sound, atau klip audio dari video TikTok dalam format MP3 berkualitas tinggi. Nikmati musik dan audio favorit Anda di mana saja, kapan saja, tanpa harus terhubung ke internet. Cukup tempelkan tautan video TikTok dan konversi ke MP3 dalam hitungan detik!
- </text>
- </div>
-    <div id="instructions">
-        <h2>Petunjuk Penggunaan:</h2>
-        <p>1. Salin tautan video TikTok yang ingin Anda unduh.</p>
-        <p>2. Tempel tautan ke dalam kotak teks di atas.</p>
-        <p>3. Klik tombol "DOWNLOAD". Tunggu beberapa detik hingga data diambil.</p>
-        <p>4. Klik tombol unduh untuk mengunduh video atau audio yang diinginkan.</p>
+        <!-- Download Button -->
+        <div class="mt-4">
+            <button id="downloadButton" onclick="handleDownload()" class="download-button bg-blue-500 text-white text-lg font-bold py-2 px-4 rounded-md w-full">DOWNLOAD</button>
+        </div>
+
+        <!-- Placeholder for additional content -->
+        <div id="content" class="mt-4 bg-gray-300 p-4 flex flex-col items-center justify-center rounded-md w-full">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+
+        <!-- Description -->
+        <div class="mt-4 p-4 bg-white rounded-md shadow-md">
+            <h2 class="text-2xl font-bold mb-2">MeledakTik - TikTok Downloader</h2>
+            <p>MeledakTik adalah alat unduhan TikTok yang memungkinkan Anda mengunduh video TikTok dengan mudah dan cepat. Dengan MeledakTik, Anda dapat mengunduh video TikTok dalam berbagai format, termasuk video HD, video dengan watermark, dan musik. Cukup tempelkan tautan video TikTok ke dalam kotak di atas, klik tombol unduh, dan pilih format yang Anda inginkan. Nikmati video TikTok favorit Anda kapan saja dan di mana saja tanpa koneksi internet!</p>
+        </div>
     </div>
-<div id="bawah">
-	<font color="white">
-		<h2>ABOUT</h2>
-	<font color="white">MeledakTik adalah tiktok video downloader yang di buat oleh Craft7 YT. anda dapat mendownload video, videoHD, dan mp3 dengan cepat.</font>
-	<br>
-		<br>
-	<div id="ip" class="info">Your IP: </div>
-    <div id="browser" class="info">Browser: </div>
-    <div id="platform" class="info">Platform: </div>
-    <div id="user-agent" class="info">User Agent: </div>
-    <div id="response-time" class="info">Response Time: </div>
-    </font>
-    <br>
-    	<br>
-    	<center>
-    <font color="#dedede">2024 © MeledakTik, crated by <font color="white"></font>Craft7 YT</font>
-	</div></center>
+
     <script>
-       document.getElementById('fetchButton').addEventListener('click', function() {
-    const urlInput = document.getElementById('tiktokUrl').value;
-    const errorDiv = document.getElementById('error');
-    const fetchButton = document.getElementById('fetchButton');
-    const resultDiv = document.getElementById('result');
-    errorDiv.textContent = '';
-
-    const tiktokUrlPattern = /^(?:https:\/\/(?:www\.)?tiktok\.com\/(@[\w.-]+\/video\/\d+)|(https:\/\/vt\.tiktok\.com\/[\w.-]+\/))$/i;
-
-    if (!tiktokUrlPattern.test(urlInput)) {
-        errorDiv.textContent = 'Link salah';
-        return;
-    }
-
-    const encodedUrl = encodeURIComponent(urlInput);
-    const apiUrl = `https://api.tiklydown.eu.org/api/download/v2?url=${encodedUrl}`;
-
-    // Disable button, change color, add margin and start countdown
-    fetchButton.disabled = true;
-    fetchButton.classList.add('disabled');
-    let countdown = 10;
-
-    const countdownInterval = setInterval(() => {
-        fetchButton.textContent = `Tunggu ${countdown} detik`;
-        countdown--;
-        if (countdown < 0) {
-            clearInterval(countdownInterval);
-            fetchButton.disabled = false;
-            fetchButton.classList.remove('disabled');
-            fetchButton.textContent = 'Ambil Data TikTok';
-        }
-    }, 1000);
-
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 200) {
-                // Menampilkan data yang diambil
-                const mediaLinks = `
-                    <p><a href="${data.result.video1}" download><button class="download-button">Video Kualitas Rendah</button></a></p>
-                    <p><a href="${data.result.video_hd}" download><button class="download-button">Video Kualitas Tinggi</button></a></p>
-                    <p><a href="${data.result.video_watermark}" download><button class="download-button">Video dengan Watermark</button></a></p>
-                    <p><a href="${data.result.music}" download><button class="download-button">Audio</button></a></p>
-                `;
-
-                resultDiv.innerHTML = `
-                    <h2>Data yang Diambil:</h2>
-                    <p><strong>Judul:</strong> ${data.result.desc}</p>
-                    <video controls>
-                        <source src="${data.result.video1}" type="video/mp4">
-                        Video tidak didukung oleh browser Anda.
-                    </video>
-                    ${mediaLinks}
-                `;
-
-                // Menambahkan event listener untuk tombol unduh
-                document.querySelectorAll('.download-button').forEach(button => {
-                    button.addEventListener('click', function(event) {
-                        button.classList.add('clicked');
-                    });
-                });
+        function toggleMenu() {
+            const sidebarMenu = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('overlay');
+            if (sidebarMenu.classList.contains('menu-hidden')) {
+                sidebarMenu.classList.remove('menu-hidden');
+                sidebarMenu.classList.add('menu-visible');
+                overlay.classList.remove('hidden');
             } else {
-                errorDiv.textContent = 'Gagal mengambil data dari API';
-                console.error('Gagal mengambil data:', data);
+                sidebarMenu.classList.remove('menu-visible');
+                sidebarMenu.classList.add('menu-hidden');
+                overlay.classList.add('hidden');
             }
-        })
-        .catch(error => {
-            errorDiv.textContent = 'Terjadi kesalahan saat mengambil data dari API';
-            console.error('Terjadi kesalahan saat mengambil data:', error);
-        });
-});
-document.getElementById('menuToggle').addEventListener('click', function() {
-    document.getElementById('sidebar').style.width = '250px';
-});
+        }
 
-function closeNav() {
-    document.getElementById('sidebar').style.width = '0';
-}
-// Fungsi untuk mengupdate informasi baterai
-function updateBatteryStatus() {
-    navigator.getBattery().then(function(battery) {
-        // Mengambil level baterai dalam persen
-        let batteryLevel = Math.floor(battery.level * 100);
+        async function pasteLink() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('videoLink').value = text;
+            } catch (err) {
+                alert('Failed to read clipboard contents: ' + err);
+            }
+        }
 
-        // Menampilkan level baterai
-        document.getElementById('batteryLevel').textContent = batteryLevel + '%';
+        async function handleDownload() {
+            disableDownloadButton();
+            const link = document.getElementById('videoLink').value;
+            if (link) {
+                try {
+                    const response = await fetch(`https://api.tiklydown.eu.org/api/download/v2?url=${encodeURIComponent(link)}`);
+                    const data = await response.json();
+                    if (data.status === 200) {
+                        const videoUrl = data.result.video_hd || data.result.video1;
+                        const videoHdUrl = data.result.video_hd;
+                        const videoWatermarkUrl = data.result.video_watermark;
+                        const musicUrl = data.result.music;
+                        const content = document.getElementById('content');
+                        content.innerHTML = `
+                            <div class="text-center w-full">
+                                <img src="${data.result.author.avatar}" alt="Author Avatar" class="w-16 h-16 rounded-full mx-auto">
+                                <p class="mt-2 font-bold">${data.result.author.nickname}</p>
+                                <p class="mt-1">${data.result.desc}</p>
+                                <video controls class="w-full mx-auto mt-4">
+                                    <source src="${videoUrl}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <a href="${videoUrl}" download class="download-button bg-blue-500 text-white text-lg font-bold py-2 px-4 rounded-md mt-4 inline-block w-full">Download Video</a>
+                                <a href="${videoHdUrl}" download class="download-button bg-blue-500 text-white text-lg font-bold py-2 px-4 rounded-md mt-4 inline-block w-full">Download Video HD</a>
+                                <a href="${videoWatermarkUrl}" download class="download-button bg-blue-500 text-white text-lg font-bold py-2 px-4 rounded-md mt-4 inline-block w-full">Download Video WM</a>
+                                <a href="${musicUrl}" download class="download-button bg-blue-500 text-white text-lg font-bold py-2 px-4 rounded-md mt-4 inline-block w-full">Download Music</a>
+                            </div>
+                        `;
+                    } else {
+                        alert('Failed to fetch video details.');
+                    }
+                } catch (error) {
+                    alert('Error fetching video details: ' + error);
+                }
+            } else {
+                alert('Please paste a TikTok video link.');
+            }
+        }
 
-        // Menampilkan status charging/not charging
-        let chargingStatus = battery.charging ? 'Charging' : 'Not Charging';
-        document.getElementById('chargingStatus').textContent = chargingStatus;
-    });
-}
+        function disableDownloadButton() {
+            const downloadButton = document.getElementById('downloadButton');
+            downloadButton.disabled = true;
+            downloadButton.classList.add('disabled-button');
+            let countdown = 10;
+            const interval = setInterval(() => {
+                downloadButton.textContent = `Wait ${countdown} seconds`;
+                countdown--;
+                if (countdown < 0) {
+                    clearInterval(interval);
+                    downloadButton.disabled = false;
+                    downloadButton.classList.remove('disabled-button');
+                    downloadButton.textContent = 'DOWNLOAD';
+                }
+            }, 1000);
+        }
 
-// Memanggil fungsi update saat halaman dimuat dan setiap kali ada perubahan baterai
-window.addEventListener('DOMContentLoaded', function() {
-    updateBatteryStatus();
-
-    navigator.getBattery().then(function(battery) {
-        battery.addEventListener('levelchange', updateBatteryStatus);
-        battery.addEventListener('chargingchange', updateBatteryStatus);
-    });
-});
-
-async function getUserInfo() {
-    const startTime = performance.now();
-
-    // Mendapatkan informasi IP pengguna dari API eksternal
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    const ip = data.ip;
-
-    const endTime = performance.now();
-    const responseTime = ((endTime - startTime) / 1000).toFixed(3); // Menghitung waktu respons dalam detik
-
-    // Mendapatkan informasi browser dan platform
-    const userAgent = navigator.userAgent;
-    const platform = navigator.platform;
-    const browser = getBrowserInfo();
-
-    // Menampilkan informasi ke dalam elemen HTML
-    document.getElementById('ip').textContent = `Your IP: ${ip}`;
-    document.getElementById('browser').textContent = `Browser: ${browser}`;
-    document.getElementById('platform').textContent = `Platform: ${platform}`;
-    document.getElementById('user-agent').textContent = `User Agent: ${userAgent}`;
-    document.getElementById('response-time').textContent = `Response Time: ${responseTime} Seconds`;
-}
-
-function getBrowserInfo() {
-    const userAgent = navigator.userAgent;
-    let browser = 'Unknown';
-
-    if (userAgent.includes('Chrome')) {
-        browser = 'Chrome';
-    } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
-        browser = 'Safari';
-    } else if (userAgent.includes('Firefox')) {
-        browser = 'Firefox';
-    } else if (userAgent.includes('MSIE') || userAgent.includes('Trident')) {
-        browser = 'Internet Explorer';
-    }
-
-    return browser;
-}
-
-window.onload = getUserInfo;
-
+        function navigateTo(page) {
+            window.location.href = page;
+        }
     </script>
 </body>
 </html>
