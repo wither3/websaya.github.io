@@ -1,0 +1,135 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .menu.open {
+            transform: translateX(0);
+        }
+    </style>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            menu.classList.toggle('open');
+        }
+
+        function pasteText() {
+            navigator.clipboard.readText()
+                .then(text => {
+                    document.getElementById('videoLink').value = text;
+                })
+                .catch(err => {
+                    console.error('Failed to read clipboard contents: ', err);
+                });
+        }
+
+        function downloadVideo() {
+            const input = document.getElementById('videoLink');
+            const url = input.value;
+            const apiUrl = `https://widipe.com/download/ytdl?url=${encodeURIComponent(url)}`;
+            
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        document.getElementById('result').innerHTML = `
+                            <h3 class="text-lg font-bold mt-4">${data.result.title}</h3>
+                            <div class="flex justify-center mt-4">
+                                <video controls class="w-full max-w-md">
+                                    <source src="${data.result.mp4}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            <div class="flex justify-center mt-4">
+                                <a href="${data.result.mp4}" class="bg-black text-white font-bold py-2 px-4 m-2 hover:bg-gray-700" target="_blank">Download Video</a>
+                                <a href="${data.result.mp3}" class="bg-black text-white font-bold py-2 px-4 m-2 hover:bg-gray-700" target="_blank">Download Audio</a>
+                            </div>
+                        `;
+                    } else {
+                        alert('Failed to fetch download links.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to download video.');
+                });
+
+            startCountdown();
+        }
+
+        function startCountdown() {
+            const button = document.getElementById('downloadButton');
+            let countdown = 10;
+            button.disabled = true;
+            button.innerText = `DOWNLOAD (${countdown})`;
+
+            const interval = setInterval(() => {
+                countdown--;
+                button.innerText = `DOWNLOAD (${countdown})`;
+
+                if (countdown === 0) {
+                    clearInterval(interval);
+                    button.disabled = false;
+                    button.innerText = 'DOWNLOAD';
+                }
+            }, 1000);
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="bg-blue-500 text-white p-2 flex items-center justify-between fixed top-0 left-0 right-0 z-50">
+        <i class="fas fa-bars text-xl cursor-pointer" onclick="toggleMenu()"></i>
+        <h1 class="text-lg font-bold">YTdown</h1>
+        <div></div>
+    </div>
+    <div id="sideMenu" class="menu fixed top-0 left-0 h-full w-64 bg-blue-500 text-white p-4 z-40">
+        <h2 class="text-xl font-bold mb-4">Menu</h2>
+        <ul>
+            <li class="mb-2"><a href="#" class="hover:underline">Home</a></li>
+            <li class="mb-2"><a href="#" class="hover:underline">About</a></li>
+            <li class="mb-2"><a href="#" class="hover:underline">Contact</a></li>
+        </ul>
+    </div>
+    <div class="pt-12 bg-red-500 text-white text-center py-4">
+        <h2 class="text-lg font-bold">MASUKKAN LINK VIDEO YOUTUBE</h2>
+        <div class="flex justify-center mt-4 px-1.5">
+            <div class="relative w-full max-w-md">
+                <input type="text" id="videoLink" class="w-full p-2 bg-red-500 border border-white text-white" placeholder="https://youtu.be/k6NcOgTeVZw?si=9fQZV6BF713-xm32">
+                <i class="fas fa-clipboard text-2xl text-white absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer" onclick="pasteText()"></i>
+            </div>
+        </div>
+        <div class="flex justify-center mt-1.5 px-1.5">
+            <button id="downloadButton" class="bg-black text-white font-bold py-2 w-full max-w-md hover:bg-gray-700" onclick="downloadVideo()">DOWNLOAD</button>
+        </div>
+    </div>
+    <div id="result" class="bg-gray-200 mt-4 mx-4 text-center p-4"></div>
+    <div class="text-center mt-8">
+        <i class="fas fa-rocket text-4xl"></i>
+        <h3 class="text-xl font-bold mt-4">SEDERHANA DAN CEPAT</h3>
+        <p class="mt-2 mx-4">Pengunduh video YouTube kami membantu Anda mengunduh video YouTube apa pun ke perangkat Anda dengan cepat dalam beberapa langkah sederhana.</p>
+    </div>
+    <div class="text-center mt-8">
+        <i class="fas fa-dollar-sign text-4xl"></i>
+        <h3 class="text-xl font-bold mt-4">BEBAS SELAMANYA</h3>
+        <p class="mt-2 mx-4">Pengunduh video YouTube gratis, berfungsi di browser web. Tidak perlu mendaftar akun.</p>
+    </div>
+    <div class="bg-red-500 text-white text-center py-4 mt-8">
+        <h3 class="text-lg font-bold">ytdown</h3>
+        <p class="mt-2"><a href="index.html" class="underline">Tiktok Video Downloader</a></p>
+        <p class="mt-2"><a href="#" class="underline">Instagram Downloader</a></p>
+        <h4 class="text-lg font-bold mt-4">Quick Links</h4>
+        <ul class="mt-2">
+            <li class="mb-2"><a href="#" class="underline">Home</a></li>
+            <li class="mb-2"><a href="#" class="underline">Terms of Use</a></li>
+            <li class="mb-2"><a href="#" class="underline">Copyright Information</a></li>
+            <li class="mb-2"><a href="#" class="underline">Privacy Policy</a></li>
+        </ul>
+        <p class="mt-4">©Copyright ytdown</p>
+    </div>
+</body>
+</html>
