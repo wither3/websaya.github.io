@@ -11,6 +11,33 @@
         .menu.open {
             transform: translateX(0);
         }
+        .battery-icon {
+            position: relative;
+            width: 16px;
+            height: 32px;
+            border: 2px solid #fff;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+        .battery-icon::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 4px;
+            background: #fff;
+            border-radius: 2px;
+        }
+        .battery-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: green;
+            border-radius: 2px 2px 0 0;
+        }
     </style>
     <script>
         function toggleMenu() {
@@ -79,13 +106,56 @@
                 }
             }, 1000);
         }
+
+        function updateBatteryStatus() {
+            navigator.getBattery().then(function(battery) {
+                function updateAllBatteryInfo() {
+                    updateChargeInfo();
+                }
+                updateAllBatteryInfo();
+
+                battery.addEventListener('chargingchange', function() {
+                    updateChargeInfo();
+                });
+
+                function updateChargeInfo() {
+                    const batteryLevel = Math.floor(battery.level * 100);
+                    document.getElementById('batteryStatus').innerText = batteryLevel + '%';
+                    const batteryLevelDiv = document.getElementById('batteryLevel');
+                    batteryLevelDiv.style.height = batteryLevel + '%';
+
+                    if (batteryLevel > 70) {
+                        batteryLevelDiv.style.background = 'green';
+                    } else if (batteryLevel > 50) {
+                        batteryLevelDiv.style.background = 'lightgreen';
+                    } else if (batteryLevel > 30) {
+                        batteryLevelDiv.style.background = 'yellow';
+                    } else if (batteryLevel > 15) {
+                        batteryLevelDiv.style.background = 'lightyellow';
+                    } else if (batteryLevel > 1) {
+                        batteryLevelDiv.style.background = 'red';
+                    } else {
+                        batteryLevelDiv.style.background = 'lightred';
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBatteryStatus();
+        });
     </script>
 </head>
 <body class="bg-gray-100">
     <div class="bg-blue-500 text-white p-2 flex items-center justify-between fixed top-0 left-0 right-0 z-50">
         <i class="fas fa-bars text-xl cursor-pointer" onclick="toggleMenu()"></i>
         <h1 class="text-lg font-bold">YTdown</h1>
-        <div></div>
+        <div class="flex items-center">
+            <div id="batteryStatus" class="text-lg font-bold mr-2"></div>
+            <div class="battery-icon">
+                <div id="batteryLevel" class="battery-level"></div>
+            </div>
+        </div>
     </div>
     <div id="sideMenu" class="menu fixed top-0 left-0 h-full w-64 bg-blue-500 text-white p-4 z-40">
         <h2 class="text-xl font-bold mb-4">Menu</h2>
@@ -117,6 +187,16 @@
         <i class="fas fa-dollar-sign text-4xl"></i>
         <h3 class="text-xl font-bold mt-4">BEBAS SELAMANYA</h3>
         <p class="mt-2 mx-4">Pengunduh video YouTube gratis, berfungsi di browser web. Tidak perlu mendaftar akun.</p>
+        <div class="bg-white shadow-md rounded-lg p-4 mt-4 mx-4">
+            <h3 class="text-xl font-bold">Cara Menggunakan YouTube Downloader</h3>
+            <ol class="list-decimal list-inside mt-2 text-left">
+                <li>Salin tautan video YouTube yang ingin Anda unduh.</li>
+                <li>Tempel tautan tersebut ke dalam kotak input di atas.</li>
+                <li>Klik tombol "DOWNLOAD" dan tunggu beberapa saat.</li>
+                <li>Pilih format yang ingin Anda unduh (Video atau Audio).</li>
+                <li>Klik tombol "Download Video" atau "Download Audio" untuk memulai pengunduhan.</li>
+            </ol>
+        </div>
     </div>
     <div class="bg-red-500 text-white text-center py-4 mt-8">
         <h3 class="text-lg font-bold">ytdown</h3>
