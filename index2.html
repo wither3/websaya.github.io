@@ -13,11 +13,11 @@
         }
         .battery-icon {
             position: relative;
-            width: 16px;
-            height: 32px;
+            width: 12px;
+            height: 24px;
             border: 2px solid #fff;
             border-radius: 4px;
-            margin-left: 8px;
+            margin-left: 5px;
         }
         .battery-icon::before {
             content: '';
@@ -25,7 +25,7 @@
             top: -4px;
             left: 50%;
             transform: translateX(-50%);
-            width: 6px;
+            width: 4px;
             height: 4px;
             background: #fff;
             border-radius: 2px;
@@ -151,7 +151,7 @@
         <i class="fas fa-bars text-xl cursor-pointer" onclick="toggleMenu()"></i>
         <h1 class="text-lg font-bold">YTdown</h1>
         <div class="flex items-center">
-            <div id="batteryStatus" class="text-lg font-bold mr-2"></div>
+            <div id="batteryStatus" class="text-lg font-bold mr-1"></div>
             <div class="battery-icon">
                 <div id="batteryLevel" class="battery-level"></div>
             </div>
@@ -169,7 +169,7 @@
         <h2 class="text-lg font-bold">MASUKKAN LINK VIDEO YOUTUBE</h2>
         <div class="flex justify-center mt-4 px-1.5">
             <div class="relative w-full max-w-md">
-                <input type="text" id="videoLink" class="w-full p-2 bg-red-500 border border-white text-white" placeholder="https://youtu.be/k6NcOgTeVZw?si=9fQZV6BF713-xm32">
+                <input type="text" id="videoLink" class="w-full p-2 bg-red-500 border border-white text-white" placeholder="Masukkan Link....">
                 <i class="fas fa-clipboard text-2xl text-white absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer" onclick="pasteText()"></i>
             </div>
         </div>
